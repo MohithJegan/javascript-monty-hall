@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>The Monty Hall Problem</h1>
+
+    <script>
+      var switchCounter = 0,
+        stayCounter = 0;
+      for (let i = 0; i < 10000; i++) {
+        // Randomly place a car in a door 1, 2, or 3
+        var car = Math.ceil(Math.random() * 3);
+        document.write("<p>The car is in door number " + car + "</p>");
+
+        // Randomly choose a door 1, 2, or 3
+        var choice = Math.ceil(Math.random() * 3);
+        document.write(
+          "<p>The contestant chose door number " + choice + "</p>"
+        );
+
+        // Check the removed door, make sure it's not the same as choice or remove
+        do {
+          var remove = Math.ceil(Math.random() * 3);
+        } while (remove === car || remove === choice);
+
+        document.write("<p>The host removes door number " + remove + "</p>");
+
+        // What was the right choice
+        if (choice === car) {
+          stayCounter += 1;
+          document.write(
+            "<p style='color:red;'>The contestant should STAY</p>"
+          );
+        } else {
+          switchCounter += 1;
+          document.write(
+            "<p style='color:green;'>The contestant should SWITCH</p>"
+          );
+        }
+      }
+      document.write(
+        "<h2 style='color:red;'>Switch was correct " +
+          switchCounter +
+          " times</h2>"
+      );
+      document.write(
+        "<h2 style='color:green;'>Stay was correct " +
+          stayCounter +
+          " times</h2>"
+      );
+      var percent = Math.round((switchCounter * 100) / 10000);
+      document.write(
+        "<h2>SWITCH was correct " + percent + "% of the time</h2>"
+      );
+
+      function montyHallSimulation(numSimulations, switchDoors) {
+        let wins = 0;
+
+        for (let i = 0; i < numSimulations; i++) {
+          // Step 1: Randomly place the car (1) and goats (0)
+          const doors = [0, 0, 0]; // [goat, goat, car]
+          const carPosition = Math.floor(Math.random() * 3); // Randomly assign car to one of the doors
+          doors[carPosition] = 1; // 1 represents the car
+
+          // Step 2: Contestant picks a door (randomly)
+          let contestantChoice = Math.floor(Math.random() * 3);
+
+          // Step 3: Monty opens one of the remaining doors that has a goat behind it
+          let montyChoice;
+          do {
+            montyChoice = Math.floor(Math.random() * 3);
+          } while (
+            montyChoice === contestantChoice ||
+            doors[montyChoice] === 1
+          );
+
+          // Step 4: Contestant either switches or sticks with their original choice
+          if (switchDoors) {
+            // Contestant switches to the other remaining door
+            contestantChoice = 3 - contestantChoice - montyChoice;
+          }
+
+          // Step 5: Check if the contestant won the car (1 represents the car)
+          if (doors[contestantChoice] === 1) {
+            wins++;
+          }
+        }
+
+        // Return the proportion of wins
+        return wins / numSimulations;
+      }
+
+      // Example usage
+      const numSimulations = 10000;
+      const winRateWhenSwitching = montyHallSimulation(numSimulations, true);
+      const winRateWhenSticking = montyHallSimulation(numSimulations, false);
+
+      console.log(
+        `Win rate when switching doors: ${(winRateWhenSwitching * 100).toFixed(
+          2
+        )}%`
+      );
+      console.log(
+        `Win rate when sticking with the original door: ${(
+          winRateWhenSticking * 100
+        ).toFixed(2)}%`
+      );
+      montyHallSimulation(10000,3);
+    </script>
+  </body>
+</html>
